@@ -1,0 +1,43 @@
+services:
+  api:
+    container_name: "bank-api"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    env_file:
+      - .env
+    build:
+      context: .
+      target: "${NODE_ENV}"
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    depends_on:
+      - bd
+    networks:
+      - bank-network
+  bd: 
+    container_name: "bank-postgres"
+    image: postgres:latest
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: "${POSTGRES_DB}"
+      PG_DATA: /var/lib/postgresql/data
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - bank-network
+
+volumes:
+  postgres-data:
+
+networks:
+  bank-network:
+    name: "bank-network"
