@@ -18,12 +18,13 @@ import { PaymentsModule } from './payments/payments.module';
         password: configService.getOrThrow('POSTGRES_PASSWORD'),
         host: configService.getOrThrow('POSTGRES_HOST'),
         type: 'postgres',
-        autoLoadEntities: true
-      })
+        autoLoadEntities: true,
+        synchronize: true
+      }),
     }),
     AuthModule,
     AccountsModule,
-    PaymentsModule
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

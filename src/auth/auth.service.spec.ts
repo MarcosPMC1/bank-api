@@ -7,9 +7,9 @@ import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let userRepository: Repository<User>
+  let userRepository: Repository<User>;
 
-  const USER_REPOSITORY_TOKEN = getRepositoryToken(User)
+  const USER_REPOSITORY_TOKEN = getRepositoryToken(User);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,20 +20,20 @@ describe('AuthService', () => {
           useValue: {
             findOne: jest.fn(),
             create: jest.fn(),
-            save: jest.fn()
-          }
+            save: jest.fn(),
+          },
         },
         {
           provide: JwtService,
           useValue: {
-            signAsync: jest.fn(() => 'token')
-          }
-        }
+            signAsync: jest.fn(() => 'token'),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    userRepository = module.get<Repository<User>>(USER_REPOSITORY_TOKEN)
+    userRepository = module.get<Repository<User>>(USER_REPOSITORY_TOKEN);
   });
 
   it('should be defined', () => {

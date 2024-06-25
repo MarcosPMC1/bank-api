@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('accounts')
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
@@ -19,16 +30,16 @@ export class AccountsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.accountsService.findOne(+id);
+    return this.accountsService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
-    return this.accountsService.update(+id, updateAccountDto);
+    return this.accountsService.update(id, updateAccountDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.accountsService.remove(+id);
+    return this.accountsService.remove(id);
   }
 }
