@@ -15,7 +15,7 @@ export class Payment {
   @Column({ type: 'numeric' })
   value: number;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'date', default: () => 'CURRENT_DATE' })
   date: Date;
 
   @Column({ type: 'varchar', length: 255 })

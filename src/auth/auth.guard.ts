@@ -25,7 +25,6 @@ export class AuthGuard implements CanActivate {
           algorithms: ['RS256'],
           publicKey: readFileSync('./key.pub').toString(),
         })
-        .catch((err) => console.log(err));
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException();

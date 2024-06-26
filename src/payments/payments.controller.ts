@@ -6,10 +6,11 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { ReportPaymentDto } from './dto/report-payment.dto';
 
 @Controller('payments')
 export class PaymentsController {
@@ -28,5 +29,10 @@ export class PaymentsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.paymentsService.findOne(id);
+  }
+
+  @Get('/report/:id')
+  reportSent(@Param('id') id: string, @Query() data: ReportPaymentDto){
+    return this.paymentsService.findReport(data, id)
   }
 }

@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Payment } from './entities/payment.entity';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { Account } from '../accounts/entities/account.entity';
+import { ReportPaymentDto } from './dto/report-payment.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -53,6 +53,18 @@ export class PaymentsService {
 
   async findOne(id: string) {
     return this.paymentRepository.findOneOrFail({ where: { id } }).catch(() => { throw new NotFoundException() })
+  }
+
+  async findReport({ startDate, endDate }: ReportPaymentDto, id: string){ 
+    const payments = await this.paymentRepository.find({ where: { date: Between(startDate, endDate), idsender: id } })
+    return {
+      accountId: id,
+      startDate,
+      endDate,
+      total: await this.paymentRepository.sum('value'),
+      payments
+    }
+
   }
 
 }
