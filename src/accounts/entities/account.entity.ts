@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Payment } from '../../payments/entities/payment.entity';
 
 @Entity('accounts')
 export class Account {
@@ -6,11 +7,17 @@ export class Account {
   id: string;
 
   @Column({ type: 'varchar', length: 255 })
-  nome: string;
+  name: string;
 
   @Column({ type: 'varchar', length: 50 })
-  tipo_conta: 'POUPANCA' | 'CORRENTE'
+  account_type: 'POUPANCA' | 'CORRENTE'
 
   @Column({ type: 'numeric' })
-  saldo: number
+  balance: number
+
+  @OneToMany(() => Payment, payment => payment.receiver)
+  receiver: Payment
+
+  @OneToMany(() => Payment, payment => payment.sender)
+  sender: Payment
 }

@@ -19,7 +19,8 @@ import { PaymentsModule } from './payments/payments.module';
         host: configService.getOrThrow('POSTGRES_HOST'),
         type: 'postgres',
         autoLoadEntities: true,
-        synchronize: true
+        synchronize: true,
+        logging: true
       }),
     }),
     AuthModule,

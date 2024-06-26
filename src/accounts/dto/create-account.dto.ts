@@ -1,12 +1,16 @@
 import { Type } from "class-transformer"
-import { IsNumber, IsPositive, Min } from "class-validator"
+import { IsEnum, IsNumber, IsPositive, IsString, Min } from "class-validator"
 
 export class CreateAccountDto {
-    nome: string
-    tipo_conta: 'POUPANCA' | 'CORRENTE'
+    @IsString()
+    name: string
+
+    @IsString()
+    @IsEnum(['POUPANCA', 'CORRENTE'])
+    account_type: 'POUPANCA' | 'CORRENTE'
 
     @Type(() => Number)
     @IsNumber()
     @IsPositive()
-    saldo: number
+    balance: number
 }

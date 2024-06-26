@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Account } from '../../accounts/entities/account.entity';
 
 @Entity('payments')
 export class Payment {
@@ -6,14 +7,25 @@ export class Payment {
   id: string;
 
   @Column({ type: 'uuid' })
-  idaccount: string;
+  idreceiver: string;
+
+  @Column({ type: 'uuid' })
+  idsender: string;
 
   @Column({ type: 'numeric' })
   value: number;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   date: Date;
 
   @Column({ type: 'varchar', length: 255 })
   description: string;
+
+  @ManyToOne(() => Account, account => account.receiver)
+  @JoinColumn({ name: 'idreceiver' })
+  receiver: Account
+
+  @ManyToOne(() => Account, account => account.sender)
+  @JoinColumn({ name: 'idsender' })
+  sender: Account
 }
