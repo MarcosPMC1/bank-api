@@ -19,6 +19,9 @@ export class PaymentsService {
       const accountRepository = entityManager.getRepository(Account)
       const paymentRepository = entityManager.getRepository(Payment)
 
+      if(createPaymentDto.receiver == createPaymentDto.sender){
+        throw new BadRequestException('Cannot send value to yourself')
+      }
 
       const receiver = await accountRepository.findOneOrFail({ where: { id: createPaymentDto.receiver } })
       .catch(() => { throw new NotFoundException('Receiver not found') })
@@ -30,10 +33,12 @@ export class PaymentsService {
         throw new BadRequestException('Sender not has balance')
       }
 
-      await accountRepository.update(sender.id, { balance: (Number(sender.balance) - Number(createPaymentDto.value)) })
-      await accountRepository.update(receiver.id, { balance: (Number(sender.balance) + Number(createPaymentDto.value)) })
+      receiver.balance = Number(receiver.balance) + Number(createPaymentDto.value)
+      sender.balance -= createPaymentDto.value
 
-      await paymentRepository.save(paymentRepository.create({ 
+      await accountRepository.save([ receiver, sender ])
+
+      return await paymentRepository.save(paymentRepository.create({ 
         description: createPaymentDto.description,
         value: createPaymentDto.value,
         sender,
