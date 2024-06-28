@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Payment } from '../../payments/entities/payment.entity';
 
 @Entity('accounts')
@@ -20,4 +20,13 @@ export class Account {
 
   @OneToMany(() => Payment, payment => payment.sender)
   sender: Payment
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date 
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updateAt: Date
+
+  @DeleteDateColumn({ type: 'timestamp' })
+  deleteAt: Date
 }

@@ -36,7 +36,7 @@ describe('AccountsService', () => {
               }
             ),
             create: jest.fn((user) => user),
-            delete: jest.fn()
+            softDelete: jest.fn(() => ({}))
           }
         },
         AccountsService
@@ -83,6 +83,14 @@ describe('AccountsService', () => {
       jest.spyOn(accountRepository, 'findOneOrFail')
       const result = service.findOne('154')
       expect(result).rejects.toBeInstanceOf(NotFoundException)
+    })
+  })
+
+  describe('delete', () => {
+    it('should success', () => {
+      jest.spyOn(accountRepository, 'softDelete')
+      const result = service.remove('123')
+      expect(result).resolves.toEqual({ msg: 'Success Deleted' })
     })
   })
 });

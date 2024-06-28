@@ -9,6 +9,15 @@ describe('PaymentsService', () => {
   let service: PaymentsService;
   let paymentsRepository: Repository<Payment>
 
+  const paymentMock = { 
+    id: 'p1',
+    description: 'teste',
+    value: 5,
+    idreceiver: '123',
+    idsender: '321',
+    date: new Date('2024-06-01'),
+  }
+
   const PAYMENT_REPOSITORY_TOKEN = getRepositoryToken(Payment)
 
   beforeEach(async () => {
@@ -45,4 +54,17 @@ describe('PaymentsService', () => {
   it('paymentsRepository should be defined', () => {
     expect(paymentsRepository).toBeDefined();
   });
+
+  describe('create', () => {
+    it('should success', () => {
+      jest.spyOn(paymentsRepository, 'save')
+      const result = service.create({
+        description: paymentMock.description,
+        receiver: paymentMock.idreceiver,
+        sender: paymentMock.idsender,
+        value: paymentMock.value
+      })
+      expect(result).resolves.toBe(paymentMock)
+    })
+  })
 });

@@ -23,7 +23,8 @@ export class AccountsService {
     return this.accountRepository.findOneOrFail({ where: { id } }).catch(() => {throw new NotFoundException()})
   }
 
-  remove(id: string) {
-    return this.accountRepository.delete(id)
+  async remove(id: string) {
+    await this.accountRepository.softDelete(id)
+    return { msg: 'Success Deleted' }
   }
 }

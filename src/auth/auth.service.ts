@@ -21,7 +21,7 @@ export class AuthService {
     const user = await this.userRepository.findOne({ where: { username } });
 
     if (!user) {
-      throw new NotFoundException();
+      throw new UnauthorizedException();
     }
 
     if (!bcrypt.compareSync(pass, user?.password)) {
