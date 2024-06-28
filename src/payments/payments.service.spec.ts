@@ -3,6 +3,7 @@ import { PaymentsService } from './payments.service';
 import { Repository } from 'typeorm';
 import { Payment } from './entities/payment.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 
 describe('PaymentsService', () => {
   let service: PaymentsService;
@@ -21,6 +22,12 @@ describe('PaymentsService', () => {
             save: jest.fn(),
             create: jest.fn(),
             sum: jest.fn()
+          }
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            getOrThrow: jest.fn()
           }
         },
         PaymentsService

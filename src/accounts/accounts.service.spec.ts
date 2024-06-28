@@ -26,9 +26,9 @@ describe('AccountsService', () => {
             save: jest.fn((user) => Promise.resolve(user)),
             find: jest.fn(() => Promise.resolve(accountsMock)),
             findOneOrFail: jest.fn(
-              (id: string) => {
-                const account = accountsMock.find(account => account.id == id)
-                console.log(accountsMock.find(account => account.id === id))
+              (param: { where: { id: string } }) => {
+                const id = param.where.id
+                const account = accountsMock.find((account) => account.id === id)
                 if(!account){
                   return new Promise(() => {throw new NotFoundException()})
                 }
@@ -77,6 +77,12 @@ describe('AccountsService', () => {
       jest.spyOn(accountRepository, 'findOneOrFail')
       const result = service.findOne('123')
       expect(result).resolves.toBe(accountsMock[0])
+    })
+
+    it('not found exception', () => {
+      jest.spyOn(accountRepository, 'findOneOrFail')
+      const result = service.findOne('154')
+      expect(result).rejects.toBeInstanceOf(NotFoundException)
     })
   })
 });

@@ -4,7 +4,7 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV}
     env_file:
-      - .env
+      - .env.local
     build:
       context: .
       target: "${NODE_ENV}"
