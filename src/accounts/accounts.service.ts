@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
-import { UpdateAccountDto } from './dto/update-account.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
 import { Repository } from 'typeorm';
@@ -20,12 +19,8 @@ export class AccountsService {
     return this.accountRepository.find();
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     return this.accountRepository.findOneOrFail({ where: { id } }).catch(() => {throw new NotFoundException()})
-  }
-
-  update(id: string, updateAccountDto: UpdateAccountDto) {
-    return this.accountRepository.update(id, updateAccountDto)
   }
 
   remove(id: string) {

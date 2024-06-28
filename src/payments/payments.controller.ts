@@ -3,19 +3,20 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   Query,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { ReportPaymentDto } from './dto/report-payment.dto';
+import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Payments')
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
+  @ApiBody({ type: [CreatePaymentDto] })
   @Post()
   create(@Body() createPaymentDto: CreatePaymentDto) {
     return this.paymentsService.create(createPaymentDto);
@@ -26,11 +27,14 @@ export class PaymentsController {
     return this.paymentsService.findAll();
   }
 
+  @ApiParam({ name: 'id', type: 'string' })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.paymentsService.findOne(id);
   }
 
+  @ApiQuery({ type: [ReportPaymentDto] })
+  @ApiParam({ name: 'id', type: 'string' })
   @Get('/report/:id')
   reportSent(@Param('id') id: string, @Query() data: ReportPaymentDto){
     return this.paymentsService.findReport(data, id)
