@@ -5,11 +5,14 @@ import {
   Body,
   Param,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { ReportPaymentDto } from './dto/report-payment.dto';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Payments')
 @Controller('payments')
@@ -38,5 +41,11 @@ export class PaymentsController {
   @Get('/report/:id')
   reportSent(@Param('id') id: string, @Query() data: ReportPaymentDto){
     return this.paymentsService.findReport(data, id)
+  }
+
+  @Post('upload/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(@UploadedFile() file: Express.Multer.File, @Param('id') id: string){
+    return this.paymentsService.upload(file.originalname, file.buffer, id)
   }
 }

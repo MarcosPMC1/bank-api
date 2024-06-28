@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { PaymentsModule } from './payments/payments.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -23,6 +24,10 @@ import { PaymentsModule } from './payments/payments.module';
         logging: true
       }),
     }),
+    MulterModule.register({
+      dest: './upload'
+    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
     AccountsModule,
     PaymentsModule,

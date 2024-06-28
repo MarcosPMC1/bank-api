@@ -21,6 +21,12 @@ export class Payment {
   @Column({ type: 'varchar', length: 255 })
   description: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  location: string
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  etag: string
+
   @ManyToOne(() => Account, account => account.receiver)
   @JoinColumn({ name: 'idreceiver' })
   receiver: Account

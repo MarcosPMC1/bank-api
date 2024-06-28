@@ -12,6 +12,7 @@ services:
     ports:
       - 3000:3000
     volumes:
+      - upload-api:/usr/app/upload
       - ./:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
@@ -37,6 +38,7 @@ services:
 
 volumes:
   postgres-data:
+  upload-api:
 
 networks:
   bank-network:
