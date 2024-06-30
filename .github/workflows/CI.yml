@@ -33,6 +33,9 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v4
 
+    - name: Install dependences
+      run: npm install
+
     - name: Run Test
       run: npm run lint
 
