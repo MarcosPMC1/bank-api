@@ -25,6 +25,7 @@ jobs:
       run: docker run $IMAGE_NAME
   
   lint:
+    needs: test
     name: Run Lint
     runs-on: ubuntu-latest
 
@@ -36,10 +37,10 @@ jobs:
       run: docker build -t $IMAGE_NAME --target=dev .
 
     - name: Run Test
-      run: docker run $IMAGE_NAME "npm run lint"
+      run: docker run -it $IMAGE_NAME "npm run lint"
 
   build:
-    needs: test
+    needs: lint
     name: Build and Push
     runs-on: ubuntu-latest
     steps:
