@@ -35,10 +35,10 @@ describe('AuthService', () => {
             }),
             create: jest.fn((user) => user),
             save: jest.fn((user: RegistrateDto): Promise<User> => new Promise((resolve, reject) => {
-              if(user.username == userMock.username){
-                reject({ code: '23505' })
+              if(user.username == userMock.username){ 
+                return reject({ code: '23505' })
               }
-              resolve({ id: '321', ...user })
+              return resolve({ id: '321', ...user })
             })),
           },
         },

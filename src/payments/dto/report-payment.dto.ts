@@ -4,11 +4,6 @@ import { IsDate, IsOptional, IsString } from 'class-validator';
 
 export class ReportPaymentDto {
   @ApiProperty()
-  @IsString()
-  @IsOptional()
-  sender: string;
-
-  @ApiProperty()
   @Type(() => Date)
   @IsDate()
   startDate: Date;

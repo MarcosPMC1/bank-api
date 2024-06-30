@@ -1,9 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';
+import { AuthGuard } from '../auth/auth.guard';
+import { CanActivate } from '@nestjs/common';
 
 describe('PaymentsController', () => {
   let controller: PaymentsController;
+  const mockGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -19,7 +22,10 @@ describe('PaymentsController', () => {
           },
         },
       ],
-    }).compile();
+    })
+    .overrideGuard(AuthGuard)
+    .useValue(mockGuard)
+    .compile();
 
     controller = module.get<PaymentsController>(PaymentsController);
   });
