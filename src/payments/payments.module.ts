@@ -13,18 +13,18 @@ import { APP_GUARD } from '@nestjs/core';
       throttlers: [
         {
           limit: 3,
-          ttl: 60
-        }
-      ]
-    })
+          ttl: 60,
+        },
+      ],
+    }),
   ],
   controllers: [PaymentsController],
   providers: [
     PaymentsService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard
-    }
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class PaymentsModule {}

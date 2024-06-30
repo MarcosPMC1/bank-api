@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Account } from '../../accounts/entities/account.entity';
 
 @Entity('payments')
@@ -22,16 +28,16 @@ export class Payment {
   description: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  location: string
+  location: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  etag: string
+  etag: string;
 
-  @ManyToOne(() => Account, account => account.receiver)
+  @ManyToOne(() => Account, (account) => account.receiver)
   @JoinColumn({ name: 'idreceiver' })
-  receiver: Account
+  receiver: Account;
 
-  @ManyToOne(() => Account, account => account.sender)
+  @ManyToOne(() => Account, (account) => account.sender)
   @JoinColumn({ name: 'idsender' })
-  sender: Account
+  sender: Account;
 }

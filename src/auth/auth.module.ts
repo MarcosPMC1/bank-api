@@ -14,7 +14,7 @@ import { readFileSync } from 'fs';
       privateKey: readFileSync('./key').toString(),
       publicKey: readFileSync('./key.pub').toString(),
       signOptions: {
-        expiresIn: '60s',
+        expiresIn: '1h',
       },
     }),
   ],

@@ -21,11 +21,11 @@ import { MulterModule } from '@nestjs/platform-express';
         type: 'postgres',
         autoLoadEntities: true,
         synchronize: true,
-        logging: true
+        logging: true,
       }),
     }),
     MulterModule.register({
-      dest: './upload'
+      dest: './upload',
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,

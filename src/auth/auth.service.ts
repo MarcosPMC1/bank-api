@@ -1,11 +1,7 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository,  } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
@@ -30,7 +26,9 @@ export class AuthService {
 
     const payload = { sub: user.id, username: user.username };
     return {
-      access_token: await this.jwtService.signAsync(payload, { algorithm: 'RS256' }),
+      access_token: await this.jwtService.signAsync(payload, {
+        algorithm: 'RS256',
+      }),
     };
   }
 
@@ -43,8 +41,15 @@ export class AuthService {
         }),
       )
       .then((data) => {
-        const { password, ...user } = data;
-        return user;
+        return Object.fromEntries(
+          Object.entries(data).filter(([key]) => key !== 'password'),
+        );
+      })
+      .catch((err) => {
+        if(err.code == '23505'){
+          throw new BadRequestException('Username is already used')
+        }
+        throw new InternalServerErrorException()
       });
   }
 }

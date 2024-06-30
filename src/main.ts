@@ -8,11 +8,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
-  .setTitle('BANK-API')
-  .setDescription('Bank api with manage accounts and balance')
-  .setVersion('1.0')
-  .build();
-  
+    .setTitle('BANK-API')
+    .setDescription('Bank api with manage accounts and balance')
+    .setVersion('1.0')
+    .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('doc', app, document);
 

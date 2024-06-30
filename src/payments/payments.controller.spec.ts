@@ -15,9 +15,9 @@ describe('PaymentsController', () => {
             create: jest.fn(),
             findAll: jest.fn(),
             findOne: jest.fn(),
-            findReport: jest.fn()
-          }
-        }
+            findReport: jest.fn(),
+          },
+        },
       ],
     }).compile();
 

@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { RegistrateDto } from './dto/registrate.dto';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -13,8 +14,8 @@ describe('AuthService', () => {
   const userMock: User = {
     id: '123',
     username: 'Marcos',
-    password: '$2a$10$GHnKvBYLUzTD.3CuRs2KEe1RtRWkZuLnRZ.8prcv2bfJjD3GbR7ru'
-  }
+    password: '$2a$10$GHnKvBYLUzTD.3CuRs2KEe1RtRWkZuLnRZ.8prcv2bfJjD3GbR7ru',
+  };
 
   const USER_REPOSITORY_TOKEN = getRepositoryToken(User);
 
@@ -25,17 +26,20 @@ describe('AuthService', () => {
         {
           provide: USER_REPOSITORY_TOKEN,
           useValue: {
-            findOne: jest.fn(
-              (param: { where: { username: string } }) => {
-                const username = param.where.username
-                if(userMock.username != username){
-                  return undefined
-                }
-                return Promise.resolve(userMock)
+            findOne: jest.fn((param: { where: { username: string } }) => {
+              const username = param.where.username;
+              if (userMock.username != username) {
+                return undefined;
               }
-            ),
+              return Promise.resolve(userMock);
+            }),
             create: jest.fn((user) => user),
-            save: jest.fn((user): Promise<User> => Promise.resolve({id: '123', ...user})),
+            save: jest.fn((user: RegistrateDto): Promise<User> => new Promise((resolve, reject) => {
+              if(user.username == userMock.username){
+                reject({ code: '23505' })
+              }
+              resolve({ id: '321', ...user })
+            })),
           },
         },
         {
@@ -49,7 +53,7 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     userRepository = module.get<Repository<User>>(USER_REPOSITORY_TOKEN);
-    return
+    return;
   });
 
   it('should be defined', () => {
@@ -62,33 +66,40 @@ describe('AuthService', () => {
 
   describe('Login', () => {
     it('should success', () => {
-      jest.spyOn(userRepository, 'findOne')
-      const result = service.Login('Marcos', 'teste123')
-      expect(result).resolves.toEqual({ access_token: 'token' })
-    })
+      jest.spyOn(userRepository, 'findOne');
+      const result = service.Login('Marcos', 'teste123');
+      expect(result).resolves.toEqual({ access_token: 'token' });
+    });
 
     it('should not found', () => {
-      jest.spyOn(userRepository, 'findOne')
-      const result = service.Login('marcos', 'teste123')
+      jest.spyOn(userRepository, 'findOne');
+      const result = service.Login('marcos', 'teste123');
 
-      expect(result).rejects.toBeInstanceOf(UnauthorizedException)
-    })
+      expect(result).rejects.toBeInstanceOf(UnauthorizedException);
+    });
 
     it('should wrong password', () => {
-      jest.spyOn(userRepository, 'findOne')
-      const result = service.Login('Marcos', 'teste12')
-      expect(result).rejects.toBeInstanceOf(UnauthorizedException)
-    })
-  })
+      jest.spyOn(userRepository, 'findOne');
+      const result = service.Login('Marcos', 'teste12');
+      expect(result).rejects.toBeInstanceOf(UnauthorizedException);
+    });
+  });
 
   describe('Registrate', () => {
     it('should success', () => {
-      jest.spyOn(userRepository, 'save')
-      const result = service.Registrate('Marcos', 'teste123')
-      const { password, ...user } = userMock
-      expect(result).resolves.toEqual(user)
-    })
-  })
+      jest.spyOn(userRepository, 'save');
+      const result = service.Registrate('Pedro', 'teste123');
+      const user = {
+        id: '321',
+        username: 'Pedro'
+      }
+      expect(result).resolves.toEqual(user);
+    });
 
-
+    it('username already used', () => {
+      jest.spyOn(userRepository, 'save');
+      const result = service.Registrate('Marcos', 'teste123');
+      expect(result).rejects.toBeInstanceOf(BadRequestException);
+    });
+  });
 });

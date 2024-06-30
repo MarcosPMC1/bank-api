@@ -8,11 +8,13 @@ import { Repository } from 'typeorm';
 export class AccountsService {
   constructor(
     @InjectRepository(Account)
-    private accountRepository: Repository<Account>
+    private accountRepository: Repository<Account>,
   ) {}
 
   create(createAccountDto: CreateAccountDto) {
-    return this.accountRepository.save(this.accountRepository.create(createAccountDto))
+    return this.accountRepository.save(
+      this.accountRepository.create(createAccountDto),
+    );
   }
 
   findAll() {
@@ -20,11 +22,13 @@ export class AccountsService {
   }
 
   async findOne(id: string) {
-    return this.accountRepository.findOneOrFail({ where: { id } }).catch(() => {throw new NotFoundException()})
+    return this.accountRepository.findOneOrFail({ where: { id } }).catch(() => {
+      throw new NotFoundException();
+    });
   }
 
   async remove(id: string) {
-    await this.accountRepository.softDelete(id)
-    return { msg: 'Success Deleted' }
+    await this.accountRepository.softDelete(id);
+    return { msg: 'Success Deleted' };
   }
 }

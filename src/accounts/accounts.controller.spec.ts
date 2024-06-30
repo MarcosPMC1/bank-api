@@ -6,7 +6,7 @@ import { CanActivate } from '@nestjs/common';
 
 describe('AccountsController', () => {
   let controller: AccountsController;
-  let mockGuard: CanActivate = { canActivate: jest.fn(() => true) }
+  const mockGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,14 +18,14 @@ describe('AccountsController', () => {
             create: jest.fn(),
             findAll: jest.fn(),
             findOne: jest.fn(),
-            remove: jest.fn()
-          }
-        }
+            remove: jest.fn(),
+          },
+        },
       ],
     })
-    .overrideGuard(AuthGuard)
-    .useValue(mockGuard)
-    .compile();
+      .overrideGuard(AuthGuard)
+      .useValue(mockGuard)
+      .compile();
 
     controller = module.get<AccountsController>(AccountsController);
   });
