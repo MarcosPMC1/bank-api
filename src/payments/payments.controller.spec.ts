@@ -23,9 +23,9 @@ describe('PaymentsController', () => {
         },
       ],
     })
-    .overrideGuard(AuthGuard)
-    .useValue(mockGuard)
-    .compile();
+      .overrideGuard(AuthGuard)
+      .useValue(mockGuard)
+      .compile();
 
     controller = module.get<PaymentsController>(PaymentsController);
   });

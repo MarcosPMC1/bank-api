@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -34,12 +34,15 @@ describe('AuthService', () => {
               return Promise.resolve(userMock);
             }),
             create: jest.fn((user) => user),
-            save: jest.fn((user: RegistrateDto): Promise<User> => new Promise((resolve, reject) => {
-              if(user.username == userMock.username){ 
-                return reject({ code: '23505' })
-              }
-              return resolve({ id: '321', ...user })
-            })),
+            save: jest.fn(
+              (user: RegistrateDto): Promise<User> =>
+                new Promise((resolve, reject) => {
+                  if (user.username == userMock.username) {
+                    return reject({ code: '23505' });
+                  }
+                  return resolve({ id: '321', ...user });
+                }),
+            ),
           },
         },
         {
@@ -91,8 +94,8 @@ describe('AuthService', () => {
       const result = service.Registrate('Pedro', 'teste123');
       const user = {
         id: '321',
-        username: 'Pedro'
-      }
+        username: 'Pedro',
+      };
       expect(result).resolves.toEqual(user);
     });
 

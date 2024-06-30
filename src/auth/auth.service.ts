@@ -1,7 +1,12 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { QueryFailedError, Repository,  } from 'typeorm';
+import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
@@ -46,10 +51,10 @@ export class AuthService {
         );
       })
       .catch((err) => {
-        if(err.code == '23505'){
-          throw new BadRequestException('Username is already used')
+        if (err.code == '23505') {
+          throw new BadRequestException('Username is already used');
         }
-        throw new InternalServerErrorException()
+        throw new InternalServerErrorException();
       });
   }
 }
