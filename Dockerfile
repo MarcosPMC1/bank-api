@@ -1,5 +1,5 @@
 # Build e Desenvolvimento
-FROM node:lts as dev
+FROM node:lts AS dev
 
 WORKDIR /usr/src/app
 
@@ -11,12 +11,10 @@ COPY . .
 
 RUN npm run build
 
-ENTRYPOINT ["npm", "run"]
-CMD ["start:dev"]
-
+CMD ["npm", "run", "start:dev"]
 
 # Teste
-FROM dev as test
+FROM dev AS test
 
 COPY test ./
 
@@ -25,7 +23,7 @@ ENV CI=true
 CMD ["npm", "run", "test"]
 
 # Produção
-FROM node:lts as prod
+FROM node:lts AS prod
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}

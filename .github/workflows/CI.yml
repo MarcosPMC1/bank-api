@@ -32,12 +32,9 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
-    
-    - name: Build Docker image
-      run: docker build -t $IMAGE_NAME --target=dev .
 
     - name: Run Test
-      run: docker run $IMAGE_NAME lint
+      run: npm run lint
 
   build:
     needs: lint
