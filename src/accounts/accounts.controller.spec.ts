@@ -8,8 +8,8 @@ import { CreateAccountDto } from './dto/create-account.dto';
 const createAccountDto: CreateAccountDto = {
   account_type: 'CORRENTE',
   balance: 10,
-  name: 'TESTE'
-}
+  name: 'TESTE',
+};
 
 describe('AccountsController', () => {
   let controller: AccountsController;
@@ -23,9 +23,13 @@ describe('AccountsController', () => {
         {
           provide: AccountsService,
           useValue: {
-            create: jest.fn((user: CreateAccountDto) => Promise.resolve({ id: '1', ...createAccountDto })),
+            create: jest.fn(() =>
+              Promise.resolve({ id: '1', ...createAccountDto }),
+            ),
             findAll: jest.fn(),
-            findOne: jest.fn((id: string) => Promise.resolve({ id, ...createAccountDto })),
+            findOne: jest.fn((id: string) =>
+              Promise.resolve({ id, ...createAccountDto }),
+            ),
             remove: jest.fn(),
           },
         },
@@ -36,7 +40,7 @@ describe('AccountsController', () => {
       .compile();
 
     controller = module.get<AccountsController>(AccountsController);
-    accountsService = module.get<AccountsService>(AccountsService)
+    accountsService = module.get<AccountsService>(AccountsService);
   });
 
   it('should be defined', () => {
@@ -44,43 +48,45 @@ describe('AccountsController', () => {
   });
 
   it('accountsService should be defined', () => {
-    expect(accountsService).toBeDefined()
-  })
+    expect(accountsService).toBeDefined();
+  });
 
   describe('create()', () => {
     it('should success', () => {
-      jest.spyOn(accountsService, 'create')
-      const result = controller.create(createAccountDto)
-      expect(result).resolves.toEqual({ id: '1', ...createAccountDto })
-      expect(accountsService.create).toHaveBeenCalledWith(createAccountDto)
-    })
-  })
+      jest.spyOn(accountsService, 'create');
+      const result = controller.create(createAccountDto);
+      expect(result).resolves.toEqual({ id: '1', ...createAccountDto });
+      expect(accountsService.create).toHaveBeenCalledWith(createAccountDto);
+    });
+  });
 
   describe('findAll()', () => {
     it('should success', () => {
-      const result = controller.findAll()
-      expect(accountsService.findAll).toHaveBeenCalled()
-    })
-  })
+      controller.findAll();
+      expect(accountsService.findAll).toHaveBeenCalled();
+    });
+  });
 
   describe('findOne()', () => {
     it('should success', () => {
-      const result = controller.findOne('1')
-      expect(result).resolves.toEqual({ id: '1', ...createAccountDto })
-      expect(accountsService.findOne).toHaveBeenCalled()
-    })
+      const result = controller.findOne('1');
+      expect(result).resolves.toEqual({ id: '1', ...createAccountDto });
+      expect(accountsService.findOne).toHaveBeenCalled();
+    });
 
     it('not found', () => {
-      jest.spyOn(controller, 'findOne').mockRejectedValueOnce(new NotFoundException())
-      const result = controller.findOne('12')
-      expect(result).rejects.toThrow(NotFoundException)
-    })
-  })
+      jest
+        .spyOn(controller, 'findOne')
+        .mockRejectedValueOnce(new NotFoundException());
+      const result = controller.findOne('12');
+      expect(result).rejects.toThrow(NotFoundException);
+    });
+  });
 
   describe('remove()', () => {
     it('should success', () => {
-      const result = controller.remove('1')
-      expect(accountsService.remove).toHaveBeenCalled()
-    })
-  })
+      controller.remove('1');
+      expect(accountsService.remove).toHaveBeenCalled();
+    });
+  });
 });
