@@ -4,8 +4,9 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { RegistrateDto } from './dto/registrate.dto';
+import * as bcrypt from 'bcrypt'
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -56,7 +57,6 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     userRepository = module.get<Repository<User>>(USER_REPOSITORY_TOKEN);
-    return;
   });
 
   it('should be defined', () => {
@@ -69,40 +69,63 @@ describe('AuthService', () => {
 
   describe('Login', () => {
     it('should success', () => {
-      jest.spyOn(userRepository, 'findOne');
       const result = service.Login('Marcos', 'teste123');
       expect(result).resolves.toEqual({ access_token: 'token' });
+      expect(userRepository.findOne).toHaveBeenCalledWith({ where: { username: 'Marcos' } })
     });
 
     it('should not found', () => {
-      jest.spyOn(userRepository, 'findOne');
       const result = service.Login('marcos', 'teste123');
-
       expect(result).rejects.toBeInstanceOf(UnauthorizedException);
+      expect(userRepository.findOne).toHaveBeenCalledWith({ where: { username: 'marcos' } })
     });
 
     it('should wrong password', () => {
-      jest.spyOn(userRepository, 'findOne');
       const result = service.Login('Marcos', 'teste12');
-      expect(result).rejects.toBeInstanceOf(UnauthorizedException);
+      expect(result).rejects.toThrow(new UnauthorizedException());
+      expect(userRepository.findOne).toHaveBeenCalledWith({ where: { username: 'Marcos' } })
     });
   });
 
   describe('Registrate', () => {
     it('should success', () => {
-      jest.spyOn(userRepository, 'save');
-      const result = service.Registrate('Pedro', 'teste123');
+      const hashPassword = bcrypt.hashSync('teste123', 10)
       const user = {
         id: '321',
         username: 'Pedro',
       };
+      jest.spyOn(userRepository, 'create').mockReturnValueOnce({
+        ...user,
+        password: hashPassword
+      })
+      const result = service.Registrate('Pedro', 'teste123');
       expect(result).resolves.toEqual(user);
+      expect(userRepository.save).toHaveBeenCalledWith({ ...user, password: hashPassword })
     });
 
     it('username already used', () => {
-      jest.spyOn(userRepository, 'save');
+      const hashPassword = bcrypt.hashSync('teste123', 10)
+      jest.spyOn(userRepository, 'create').mockReturnValueOnce({
+        id: userMock.id,
+        username: userMock.username,
+        password: hashPassword
+      })
       const result = service.Registrate('Marcos', 'teste123');
       expect(result).rejects.toBeInstanceOf(BadRequestException);
+      expect(userRepository.save).toHaveBeenCalledWith({ ...userMock, password: hashPassword })
+    });
+
+    it('query error', () => {
+      jest.spyOn(userRepository, 'save').mockRejectedValueOnce(new InternalServerErrorException)
+      const hashPassword = bcrypt.hashSync('teste123', 10)
+      jest.spyOn(userRepository, 'create').mockReturnValueOnce({
+        id: userMock.id,
+        username: userMock.username,
+        password: hashPassword
+      })
+      const result = service.Registrate('Marcos', 'teste123');
+      expect(result).rejects.toBeInstanceOf(InternalServerErrorException);
+      expect(userRepository.save).toHaveBeenCalledWith({ ...userMock, password: hashPassword })
     });
   });
 });

@@ -25,7 +25,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    if (!bcrypt.compareSync(pass, user?.password)) {
+    if (!bcrypt.compareSync(pass, user.password)) {
       throw new UnauthorizedException();
     }
 
