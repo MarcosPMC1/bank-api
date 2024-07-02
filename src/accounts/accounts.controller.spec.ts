@@ -53,7 +53,6 @@ describe('AccountsController', () => {
 
   describe('create()', () => {
     it('should success', () => {
-      jest.spyOn(accountsService, 'create');
       const result = controller.create(createAccountDto);
       expect(result).resolves.toEqual({ id: '1', ...createAccountDto });
       expect(accountsService.create).toHaveBeenCalledWith(createAccountDto);
